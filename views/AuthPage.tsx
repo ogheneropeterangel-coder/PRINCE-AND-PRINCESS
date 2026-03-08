@@ -128,7 +128,11 @@ const AuthPage: React.FC = () => {
         }
       }
     } catch (err: any) {
-      setError(err.message || 'System error occurred.');
+      if (err.message === 'Failed to fetch') {
+        setError('Network Error: Please check your internet connection.');
+      } else {
+        setError(err.message || 'System error occurred.');
+      }
     } finally {
       setLoading(false);
     }

@@ -63,7 +63,7 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const fetchProfile = async (id: string, email?: string) => {
+  const fetchProfile = async (id: string, email?: string, retries = 2) => {
     try {
       let { data: profile, error } = await supabase
         .from('profiles')
@@ -74,45 +74,57 @@ const App: React.FC = () => {
       if (error) throw error;
       
       const emailPrefix = email?.split('@')[0].toLowerCase() || "";
-      const normalizedUsernameSlash = emailPrefix.replace(/_/g, '/');
-      const normalizedUsernameUnderscore = emailPrefix;
+      if (emailPrefix) {
+        const normalizedUsernameSlash = emailPrefix.replace(/_/g, '/');
+        const normalizedUsernameUnderscore = emailPrefix;
 
-      const { data: legacy } = await supabase
-        .from('profiles')
-        .select('*')
-        .or(`username.ilike.${normalizedUsernameSlash},username.ilike.${normalizedUsernameUnderscore}`)
-        .neq('id', id)
-        .maybeSingle();
-
-      if (legacy) {
-        await Promise.allSettled([
-          supabase.from('students').update({ profile_id: id }).eq('profile_id', legacy.id),
-          supabase.from('students').update({ profile_id: id }).eq('id', legacy.id),
-          supabase.from('classes').update({ form_teacher_id: id }).eq('form_teacher_id', legacy.id),
-          supabase.from('teacher_subjects').update({ teacher_id: id }).eq('teacher_id', legacy.id)
-        ]);
-
-        const { data: reconciled, error: upsertError } = await supabase
+        const { data: legacy, error: legacyError } = await supabase
           .from('profiles')
-          .upsert({ 
-            id,
-            username: legacy.username,
-            full_name: legacy.full_name,
-            role: legacy.role, 
-            password: null 
-          })
-          .select()
-          .single();
+          .select('*')
+          .or(`username.ilike.${normalizedUsernameSlash},username.ilike.${normalizedUsernameUnderscore}`)
+          .neq('id', id)
+          .maybeSingle();
 
-        if (!upsertError && reconciled) {
-          profile = reconciled;
-          await supabase.from('profiles').delete().eq('id', legacy.id);
+        if (legacy && !legacyError) {
+          await Promise.allSettled([
+            supabase.from('students').update({ profile_id: id }).eq('profile_id', legacy.id),
+            supabase.from('students').update({ profile_id: id }).eq('id', legacy.id),
+            supabase.from('classes').update({ form_teacher_id: id }).eq('form_teacher_id', legacy.id),
+            supabase.from('teacher_subjects').update({ teacher_id: id }).eq('teacher_id', legacy.id)
+          ]);
+
+          const { data: reconciled, error: upsertError } = await supabase
+            .from('profiles')
+            .upsert({ 
+              id,
+              username: legacy.username,
+              full_name: legacy.full_name,
+              role: legacy.role, 
+              password: null 
+            })
+            .select()
+            .single();
+
+          if (!upsertError && reconciled) {
+            profile = reconciled;
+            await supabase.from('profiles').delete().eq('id', legacy.id);
+          }
         }
       }
 
       setUser(profile as User || null);
     } catch (err: any) {
-      console.error("Registry Sync Failure:", err.message || err);
+      if (!navigator.onLine) {
+        console.error("Registry Sync Failure: Network is offline.");
+        setLoading(false);
+        return;
+      }
+      if (retries > 0 && (err.message === 'Failed to fetch' || err.code === 'PGRST301')) {
+        console.warn(`Registry Sync Retry (${retries} left):`, err.message);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        return fetchProfile(id, email, retries - 1);
+      }
+      console.error("Registry Sync Failure:", err);
     } finally {
       setLoading(false);
     }

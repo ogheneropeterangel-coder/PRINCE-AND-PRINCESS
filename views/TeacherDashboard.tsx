@@ -15,6 +15,8 @@ const TeacherDashboard: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [viewingStudent, setViewingStudent] = useState<Student | null>(null);
   const [studentAllScores, setStudentAllScores] = useState<Score[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTerm, setSelectedTerm] = useState<number>(1);
   
   const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
   const [allClasses, setAllClasses] = useState<SchoolClass[]>([]);
@@ -33,10 +35,17 @@ const TeacherDashboard: React.FC = () => {
         setAllSubjects(subs);
         setAllClasses(cls);
         setSettings(sets);
+        if (sets) setSelectedTerm(sets.current_term);
       }
     };
     fetchData();
   }, [user]);
+
+  useEffect(() => {
+    if (selectedSubject) {
+      handleSubjectSelect(selectedSubject);
+    }
+  }, [selectedTerm]);
 
   const handleSubjectSelect = async (tsId: string) => {
     const ts = assignedSubjects.find(t => t.id === tsId);
@@ -51,7 +60,11 @@ const TeacherDashboard: React.FC = () => {
     const classStudents = allStudents.filter(s => s.class_id === ts.class_id);
     setStudents(classStudents);
 
-    const existingScores = allScores.filter(s => s.subject_id === ts.subject_id && s.class_id === ts.class_id);
+    const existingScores = allScores.filter(s => 
+      s.subject_id === ts.subject_id && 
+      s.class_id === ts.class_id &&
+      s.term === selectedTerm
+    );
     const scoreMap: Record<string, Score> = {};
     existingScores.forEach(s => scoreMap[s.student_id] = s);
     setScores(scoreMap);
@@ -105,7 +118,7 @@ const TeacherDashboard: React.FC = () => {
         first_ca: data.first_ca || 0,
         second_ca: data.second_ca || 0,
         exam: data.exam || 0,
-        term: currentSettings.current_term,
+        term: selectedTerm,
         session: currentSettings.current_session,
         is_published: false,
         is_approved_by_form_teacher: false,
@@ -136,7 +149,7 @@ const TeacherDashboard: React.FC = () => {
 
       <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm relative transition-all">
         <div className="flex flex-col md:flex-row gap-6 mb-8 no-print">
-          <div className="flex-1">
+          <div className="flex-[2]">
             <label className="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest ml-2">Assigned Class & Subject</label>
             <select 
               className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none font-bold"
@@ -153,6 +166,18 @@ const TeacherDashboard: React.FC = () => {
               })}
             </select>
           </div>
+          <div className="flex-1">
+            <label className="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest ml-2">Academic Term</label>
+            <select 
+              className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none font-bold"
+              value={selectedTerm}
+              onChange={(e) => setSelectedTerm(Number(e.target.value))}
+            >
+              <option value={1}>First Term</option>
+              <option value={2}>Second Term</option>
+              <option value={3}>Third Term</option>
+            </select>
+          </div>
           <div className="flex items-end gap-3">
             <button 
               disabled={!selectedSubject || isSaving}
@@ -164,6 +189,21 @@ const TeacherDashboard: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {selectedSubject && (
+          <div className="mb-6 no-print">
+            <div className="relative">
+              <input 
+                type="text" 
+                placeholder="Search student name..." 
+                className="w-full pl-12 pr-6 py-4 rounded-2xl border border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none font-medium"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Eye className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            </div>
+          </div>
+        )}
 
         {selectedSubject ? (
           <div className="overflow-x-auto border border-slate-100 dark:border-slate-700 rounded-[2rem]">
@@ -180,7 +220,9 @@ const TeacherDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-                {students.map(s => {
+                {students
+                  .filter(s => `${s.first_name} ${s.surname}`.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .map(s => {
                   const studentScore = scores[s.id] || {};
                   const total = (Number(studentScore.first_ca) || 0) + (Number(studentScore.second_ca) || 0) + (Number(studentScore.exam) || 0);
                   return (

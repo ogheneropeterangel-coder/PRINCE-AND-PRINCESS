@@ -136,8 +136,12 @@ export const db = {
       const { error } = await supabase.from('scores').upsert(score);
       if (error) throw error;
     },
-    updateByClass: async (classId: string, updates: Partial<Score>) => {
-      const { error } = await supabase.from('scores').update(updates).eq('class_id', classId);
+    updateByClass: async (classId: string, term: number, session: string, updates: Partial<Score>) => {
+      const { error } = await supabase.from('scores')
+        .update(updates)
+        .eq('class_id', classId)
+        .eq('term', term)
+        .eq('session', session);
       if (error) throw error;
     },
     removeBySubject: async (subjectId: string) => {
@@ -158,19 +162,24 @@ export const db = {
   },
   settings: {
     get: async (): Promise<SchoolSettings> => {
-      const cached = getCached('settings');
-      if (cached) return cached;
-      const { data, error } = await supabase.from('settings').select('*').single();
-      if (error) return {
-        name: DEFAULT_SETTINGS.name,
-        logo: DEFAULT_SETTINGS.logo,
-        motto: DEFAULT_SETTINGS.motto,
-        primary_color: DEFAULT_SETTINGS.primaryColor,
-        current_term: DEFAULT_SETTINGS.currentTerm,
-        current_session: DEFAULT_SETTINGS.currentSession
-      };
-      setCache('settings', data);
-      return data as SchoolSettings;
+      try {
+        const cached = getCached('settings');
+        if (cached) return cached;
+        const { data, error } = await supabase.from('settings').select('*').single();
+        if (error) throw error;
+        setCache('settings', data);
+        return data as SchoolSettings;
+      } catch (err) {
+        console.warn("Settings Fetch Error, using defaults:", err);
+        return {
+          name: DEFAULT_SETTINGS.name,
+          logo: DEFAULT_SETTINGS.logo,
+          motto: DEFAULT_SETTINGS.motto,
+          primary_color: DEFAULT_SETTINGS.primaryColor,
+          current_term: DEFAULT_SETTINGS.currentTerm,
+          current_session: DEFAULT_SETTINGS.currentSession
+        };
+      }
     },
     update: async (updates: Partial<SchoolSettings>) => {
       const { error } = await supabase.from('settings').upsert({ id: 1, ...updates });

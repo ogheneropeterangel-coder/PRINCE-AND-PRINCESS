@@ -27,48 +27,85 @@ const StaffDashboard: React.FC = () => {
   const [selectedReportStudent, setSelectedReportStudent] = useState<Student | null>(null);
   const [isAiGenerating, setIsAiGenerating] = useState<string | null>(null);
   const [isApproving, setIsApproving] = useState(false);
+  const [selectedTerm, setSelectedTerm] = useState<number>(1);
 
   const [settings, setSettings] = useState<SchoolSettings | null>(null);
   const [allClasses, setAllClasses] = useState<SchoolClass[]>([]);
   const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+  const fetchData = async (termOverride?: number) => {
+    if (!user) return;
+    const s = settings || await db.settings.get();
+    if (!settings) setSettings(s);
+    
+    const term = termOverride || selectedTerm;
+    
+    try {
+      const [clsList, subList] = await Promise.all([db.classes.getAll(), db.subjects.getAll()]);
+      setAllClasses(clsList);
+      setAllSubjects(subList);
+      
+      const ts = (await db.teacherSubjects.getAll()).filter(t => t.teacher_id === user.id);
+      setAssignedSubjects(ts);
+      
+      const cls = clsList.find(c => c.form_teacher_id === user.id);
+      if (cls) {
+        setMyClass(cls);
+        const [allStudents, allScores, allRemarks] = await Promise.all([db.students.getAll(), db.scores.getAll(), db.remarks.getAll()]);
+        const stu = allStudents.filter(s => s.class_id === cls.id);
+        setClassStudents(stu);
+        
+        const scores = allScores.filter(sc => sc.class_id === cls.id && sc.term === term && sc.session === s.current_session);
+        setClassScores(scores);
+        
+        setClassSubjects(subList.filter(sub => sub.category === cls.level));
+        
+        const existingRemarks = allRemarks.filter(r => r.class_id === cls.id && r.term === term && r.session === s.current_session);
+        const remarkMap: Record<string, FormTeacherRemark> = {};
+        existingRemarks.forEach(r => remarkMap[r.student_id] = r);
+        setRemarks(remarkMap);
+      }
+      
+      if (selectedSubject) {
+        const tsSelected = ts.find(t => t.id === selectedSubject);
+        if (tsSelected) {
+          const [allStudents, allScores] = await Promise.all([db.students.getAll(), db.scores.getAll()]);
+          const stu = allStudents.filter(s => s.class_id === tsSelected.class_id);
+          setStudentsInSubject(stu);
+          const scores = allScores.filter(s => s.subject_id === tsSelected.subject_id && s.class_id === tsSelected.class_id && s.term === term && s.session === settings.current_session);
+          const scoreMap: Record<string, Score> = {};
+          scores.forEach(s => scoreMap[s.student_id] = s);
+          setSubjectScores(scoreMap);
+        }
+      }
+    } catch (err) {
+      console.error("Data Fetch Error:", err);
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       if (!user) return;
       setIsInitialLoading(true);
-      try {
-        const s = await db.settings.get();
-        setSettings(s);
-        const [clsList, subList] = await Promise.all([db.classes.getAll(), db.subjects.getAll()]);
-        setAllClasses(clsList);
-        setAllSubjects(subList);
-        const ts = (await db.teacherSubjects.getAll()).filter(t => t.teacher_id === user.id);
-        setAssignedSubjects(ts);
-        const cls = clsList.find(c => c.form_teacher_id === user.id);
-        if (cls) {
-          setMyClass(cls);
-          const [allStudents, allScores, allRemarks] = await Promise.all([db.students.getAll(), db.scores.getAll(), db.remarks.getAll()]);
-          const stu = allStudents.filter(s => s.class_id === cls.id);
-          setClassStudents(stu);
-          const scores = allScores.filter(sc => sc.class_id === cls.id && sc.term === s.current_term && sc.session === s.current_session);
-          setClassScores(scores);
-          setClassSubjects(subList.filter(sub => sub.category === cls.level));
-          const existingRemarks = allRemarks.filter(r => r.class_id === cls.id && r.term === s.current_term && r.session === s.current_session);
-          const remarkMap: Record<string, FormTeacherRemark> = {};
-          existingRemarks.forEach(r => remarkMap[r.student_id] = r);
-          setRemarks(remarkMap);
-        }
-      } catch (err: any) { 
-        console.error("Staff Dashboard Load Error:", err);
-      } finally { setIsInitialLoading(false); }
+      const s = await db.settings.get();
+      setSettings(s);
+      setSelectedTerm(s.current_term);
+      await fetchData(s.current_term);
+      setIsInitialLoading(false);
     };
     init();
   }, [user]);
 
+  useEffect(() => {
+    if (!isInitialLoading) {
+      fetchData();
+    }
+  }, [selectedTerm]);
+
   const generateAiRemark = async (student: Student) => {
-    // Guidelines: Use process.env.API_KEY directly for model access.
-    if (!settings || !process.env.API_KEY) {
+    // Guidelines: Use process.env.GEMINI_API_KEY directly for model access.
+    if (!settings || !process.env.GEMINI_API_KEY) {
         alert("AI Core requires an active API Key.");
         return;
     }
@@ -76,12 +113,12 @@ const StaffDashboard: React.FC = () => {
     const res = computeResults(student.id);
     try {
       // Guidelines: Create a new GoogleGenAI instance right before making an API call using the direct environment variable.
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const prompt = AI_REMARK_PROMPT(`${student.first_name} ${student.surname}`, res.average, res.total, res.count, getOrdinal(res.position));
       const response = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt });
       // Guidelines: Use the .text property directly.
       const aiText = response.text?.trim().replace(/^"|"$/g, '') || getAutoRemark(res.average);
-      const nr: FormTeacherRemark = { id: remarks[student.id]?.id || crypto.randomUUID(), student_id: student.id, class_id: myClass!.id, remark: aiText, term: settings.current_term, session: settings.current_session };
+      const nr: FormTeacherRemark = { id: remarks[student.id]?.id || crypto.randomUUID(), student_id: student.id, class_id: myClass!.id, remark: aiText, term: selectedTerm as 1 | 2 | 3, session: settings.current_session };
       setRemarks(prev => ({ ...prev, [student.id]: nr }));
       await db.remarks.save(nr);
     } catch (err: any) {
@@ -97,7 +134,7 @@ const StaffDashboard: React.FC = () => {
       const [allStudents, allScores] = await Promise.all([db.students.getAll(), db.scores.getAll()]);
       const stu = allStudents.filter(s => s.class_id === ts.class_id);
       setStudentsInSubject(stu);
-      const scores = allScores.filter(s => s.subject_id === ts.subject_id && s.class_id === ts.class_id && s.term === settings.current_term && s.session === settings.current_session);
+      const scores = allScores.filter(s => s.subject_id === ts.subject_id && s.class_id === ts.class_id && s.term === selectedTerm && s.session === settings.current_session);
       const scoreMap: Record<string, Score> = {};
       scores.forEach(s => scoreMap[s.student_id] = s);
       setSubjectScores(scoreMap);
@@ -120,7 +157,7 @@ const StaffDashboard: React.FC = () => {
         const scoreObj: Score = {
           id: data.id || crypto.randomUUID(), student_id: studentId, subject_id: ts.subject_id, class_id: ts.class_id,
           first_ca: Number(data.first_ca) || 0, second_ca: Number(data.second_ca) || 0, exam: Number(data.exam) || 0,
-          term: settings.current_term, session: settings.current_session, is_published: true, 
+          term: selectedTerm as 1 | 2 | 3, session: settings.current_session, is_published: true, 
           is_approved_by_form_teacher: autoApprove ? true : (data.is_approved_by_form_teacher ?? false),
           comment: data.comment || ''
         };
@@ -129,16 +166,7 @@ const StaffDashboard: React.FC = () => {
       await Promise.all(promises);
       
       // Refresh local state
-      const allS = await db.scores.getAll();
-      const scores = allS.filter(s => s.subject_id === ts.subject_id && s.class_id === ts.class_id && s.term === settings.current_term && s.session === settings.current_session);
-      const scoreMap: Record<string, Score> = {};
-      scores.forEach(s => scoreMap[s.student_id] = s);
-      setSubjectScores(scoreMap);
-
-      if (myClass) {
-          const updatedScores = allS.filter(s => s.class_id === myClass.id && s.term === settings.current_term && s.session === settings.current_session);
-          setClassScores(updatedScores);
-      }
+      await fetchData();
       
       if (autoApprove) {
         alert('Marks have been approved and are now visible to students.');
@@ -154,8 +182,8 @@ const StaffDashboard: React.FC = () => {
 
   const positions = useMemo(() => {
     if (!settings) return {};
-    return calculatePositions(classStudents, classScores, settings.current_term, settings.current_session);
-  }, [classStudents, classScores, settings]);
+    return calculatePositions(classStudents, classScores, selectedTerm, settings.current_session);
+  }, [classStudents, classScores, settings, selectedTerm]);
 
   const computeResults = (studentId: string) => {
     const stuScores = classScores.filter(s => s.student_id === studentId);
@@ -170,8 +198,7 @@ const StaffDashboard: React.FC = () => {
       const stuScores = classScores.filter(s => s.student_id === studentId);
       const promises = stuScores.map(sc => db.scores.save({...sc, is_approved_by_form_teacher: !currentStatus}));
       await Promise.all(promises);
-      const updated = (await db.scores.getAll()).filter(s => s.class_id === myClass!.id && s.term === settings!.current_term && s.session === settings!.current_session);
-      setClassScores(updated);
+      await fetchData();
     } catch (err) { console.error("Approval Toggle Error", err); }
   };
 
@@ -180,7 +207,18 @@ const StaffDashboard: React.FC = () => {
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-4xl font-black dark:text-white uppercase tracking-tighter">Academic <span className="text-blue-600">Portal</span></h1>
-          <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px] mt-1">{settings?.current_session || '---'} Session | Term {settings?.current_term || '---'}</p>
+          <div className="flex items-center gap-4 mt-1">
+            <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px]">{settings?.current_session || '---'} Session</p>
+            <select 
+              className="bg-transparent text-[10px] font-black uppercase tracking-widest text-blue-600 outline-none cursor-pointer"
+              value={selectedTerm}
+              onChange={(e) => setSelectedTerm(Number(e.target.value))}
+            >
+              <option value={1}>Term 1</option>
+              <option value={2}>Term 2</option>
+              <option value={3}>Term 3</option>
+            </select>
+          </div>
         </div>
         <div className="flex bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-sm border dark:border-slate-700">
           <button onClick={() => setActiveTab('grading')} className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'grading' ? 'bg-blue-600 text-white shadow-xl' : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900'}`}>Course Records</button>
@@ -335,7 +373,7 @@ const StaffDashboard: React.FC = () => {
                                 <td className="px-10 py-6">
                                    <div className="flex items-center gap-3">
                                       <input type="text" className="flex-1 bg-transparent text-xs border-b dark:border-slate-700 focus:border-blue-500 outline-none py-1 italic text-slate-600 dark:text-slate-300" placeholder={getAutoRemark(res.average)} value={remarks[s.id]?.remark || ''} onChange={(e) => {
-                                        const nr: FormTeacherRemark = { id: remarks[s.id]?.id || crypto.randomUUID(), student_id: s.id, class_id: myClass.id, remark: e.target.value, term: settings.current_term, session: settings.current_session };
+                                        const nr: FormTeacherRemark = { id: remarks[s.id]?.id || crypto.randomUUID(), student_id: s.id, class_id: myClass.id, remark: e.target.value, term: selectedTerm as 1 | 2 | 3, session: settings.current_session };
                                         setRemarks({...remarks, [s.id]: nr}); db.remarks.save(nr);
                                       }} />
                                       <button onClick={() => generateAiRemark(s)} disabled={isAiGenerating === s.id} className={`p-2 rounded-xl transition-all ${isAiGenerating === s.id ? 'animate-spin text-blue-400' : 'text-blue-500 hover:bg-blue-50'}`} title="Generate AI Remark">
@@ -425,7 +463,7 @@ const StaffDashboard: React.FC = () => {
                </div>
                <div className="text-right">
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cycle</p>
-                 <p className="text-sm font-bold text-slate-800">Term {settings.current_term}</p>
+                 <p className="text-sm font-bold text-slate-800">Term {selectedTerm}</p>
                  <p className="text-xs font-black uppercase text-blue-600">{settings.current_session}</p>
                </div>
             </div>

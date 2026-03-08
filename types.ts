@@ -84,6 +84,8 @@ export interface FormTeacherRemark {
   term: 1 | 2 | 3;
   session: string;
   position?: number;
+  affective_domain?: Record<string, number>;
+  psychomotor_domain?: Record<string, number>;
 }
 
 export interface SchoolSettings {

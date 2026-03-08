@@ -19,13 +19,15 @@ const FormTeacherDashboard: React.FC = () => {
   const [isProcessingApproval, setIsProcessingApproval] = useState<string | null>(null);
   
   const [settings, setSettings] = useState<SchoolSettings | null>(null);
+  const [selectedTerm, setSelectedTerm] = useState<number>(1);
   const [currentTerm, setCurrentTerm] = useState<number>(1);
   const [currentSession, setCurrentSession] = useState<string>('');
 
-  const refreshData = async () => {
+  const refreshData = async (termOverride?: number) => {
     const s = await db.settings.get();
     setSettings(s);
-    setCurrentTerm(s.current_term);
+    const term = termOverride || selectedTerm || s.current_term;
+    setCurrentTerm(term);
     setCurrentSession(s.current_session);
 
     if (user) {
@@ -43,12 +45,12 @@ const FormTeacherDashboard: React.FC = () => {
         const classStudents = allStudents.filter(stu => stu.class_id === cls.id);
         setStudents(classStudents);
         
-        const scores = allScoresRaw.filter(sc => sc.class_id === cls.id && sc.term === s.current_term && sc.session === s.current_session);
+        const scores = allScoresRaw.filter(sc => sc.class_id === cls.id && sc.term === term && sc.session === s.current_session);
         setAllScores(scores);
         
         setSubjects(allSubjectsRaw.filter(sub => sub.category === cls.level));
         
-        const existingRemarks = allRemarksRaw.filter(r => r.class_id === cls.id && r.term === s.current_term && r.session === s.current_session);
+        const existingRemarks = allRemarksRaw.filter(r => r.class_id === cls.id && r.term === term && r.session === s.current_session);
         const remarkMap: Record<string, FormTeacherRemark> = {};
         existingRemarks.forEach(r => remarkMap[r.student_id] = r);
         setRemarks(remarkMap);
@@ -57,8 +59,19 @@ const FormTeacherDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    refreshData();
+    const init = async () => {
+      const s = await db.settings.get();
+      setSelectedTerm(s.current_term);
+      refreshData(s.current_term);
+    };
+    init();
   }, [user]);
+
+  useEffect(() => {
+    if (settings) {
+      refreshData();
+    }
+  }, [selectedTerm]);
 
   const positions = useMemo(() => {
     return calculatePositions(students, allScores, currentTerm, currentSession);
@@ -110,8 +123,8 @@ const FormTeacherDashboard: React.FC = () => {
 
   const publishResults = async () => {
     if (!myClass) return;
-    if (confirm("Approve all results for this class and finalize transcript publishing?")) {
-      await db.scores.updateByClass(myClass.id, { is_approved_by_form_teacher: true });
+    if (confirm(`Approve all results for ${myClass.name} in Term ${currentTerm} and finalize transcript publishing?`)) {
+      await db.scores.updateByClass(myClass.id, currentTerm, currentSession, { is_approved_by_form_teacher: true });
       await refreshData();
       alert('Class transcripts published successfully.');
     }
@@ -152,6 +165,15 @@ const FormTeacherDashboard: React.FC = () => {
           <p className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest text-xs">{myClass.name} — {currentSession} — Term {currentTerm}</p>
         </div>
         <div className="flex flex-wrap gap-3">
+          <select 
+            className="px-5 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-black uppercase outline-none text-slate-900 dark:text-white shadow-sm"
+            value={selectedTerm}
+            onChange={(e) => setSelectedTerm(Number(e.target.value))}
+          >
+            <option value={1}>First Term</option>
+            <option value={2}>Second Term</option>
+            <option value={3}>Third Term</option>
+          </select>
           <button onClick={printClassSummary} className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">
             <FileSpreadsheet size={18} /> Broad Sheet
           </button>
