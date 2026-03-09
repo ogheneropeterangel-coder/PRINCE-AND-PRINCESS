@@ -22,7 +22,8 @@ export const DEFAULT_SETTINGS = {
   logo: "https://api.dicebear.com/7.x/initials/svg?seed=PP&backgroundColor=002366",
   primaryColor: "#002366",
   currentTerm: 1 as const,
-  currentSession: "2023/2024"
+  currentSession: "2023/2024",
+  next_term_begins: "2024-09-01"
 };
 
 export const GRADING_SYSTEM = [

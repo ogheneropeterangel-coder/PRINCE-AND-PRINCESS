@@ -197,6 +197,9 @@ const StudentDashboard: React.FC = () => {
             </div>
             <div className="bg-blue-900 text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">Official Academic Terminal Record</div>
             <p className="text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-2">{settings.current_session} Session • Term {selectedTerm}</p>
+            <p className="text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">
+              Next Term Begins: {settings.next_term_begins ? new Date(settings.next_term_begins).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '________________'}
+            </p>
         </div>
 
         <div className="grid grid-cols-4 gap-0 mb-6 bg-slate-50 border-y-2 border-blue-900 relative z-10 text-black">

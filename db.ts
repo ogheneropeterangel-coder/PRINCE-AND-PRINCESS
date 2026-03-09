@@ -167,8 +167,24 @@ export const db = {
         if (cached) return cached;
         const { data, error } = await supabase.from('settings').select('*').single();
         if (error) throw error;
-        setCache('settings', data);
-        return data as SchoolSettings;
+        
+        // Handle motto hijacking for next_term_begins
+        let motto = data.motto || '';
+        let next_term_begins = '';
+        if (motto.includes(' | NEXT_TERM:')) {
+          const parts = motto.split(' | NEXT_TERM:');
+          motto = parts[0];
+          next_term_begins = parts[1];
+        }
+
+        const settings = {
+          ...data,
+          motto,
+          next_term_begins: next_term_begins || DEFAULT_SETTINGS.next_term_begins
+        };
+
+        setCache('settings', settings);
+        return settings as SchoolSettings;
       } catch (err) {
         console.warn("Settings Fetch Error, using defaults:", err);
         return {
@@ -177,12 +193,21 @@ export const db = {
           motto: DEFAULT_SETTINGS.motto,
           primary_color: DEFAULT_SETTINGS.primaryColor,
           current_term: DEFAULT_SETTINGS.currentTerm,
-          current_session: DEFAULT_SETTINGS.currentSession
+          current_session: DEFAULT_SETTINGS.currentSession,
+          next_term_begins: DEFAULT_SETTINGS.next_term_begins
         };
       }
     },
     update: async (updates: Partial<SchoolSettings>) => {
-      const { error } = await supabase.from('settings').upsert({ id: 1, ...updates });
+      const { id, next_term_begins, ...rest } = updates as any;
+      
+      // Handle motto hijacking
+      if (next_term_begins) {
+        const baseMotto = rest.motto || '';
+        rest.motto = `${baseMotto} | NEXT_TERM:${next_term_begins}`;
+      }
+
+      const { error } = await supabase.from('settings').upsert({ id: 1, ...rest });
       if (error) throw error;
       delete cache['settings'];
     }

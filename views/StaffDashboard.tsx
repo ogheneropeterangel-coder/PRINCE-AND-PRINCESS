@@ -465,6 +465,9 @@ const StaffDashboard: React.FC = () => {
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cycle</p>
                  <p className="text-sm font-bold text-slate-800">Term {selectedTerm}</p>
                  <p className="text-xs font-black uppercase text-blue-600">{settings.current_session}</p>
+                 <p className="text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">
+                   Next Term Begins: {settings.next_term_begins ? new Date(settings.next_term_begins).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '________________'}
+                 </p>
                </div>
             </div>
             <table className="w-full border-collapse border-2 border-slate-900 mb-10">

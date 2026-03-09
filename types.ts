@@ -95,6 +95,7 @@ export interface SchoolSettings {
   primary_color: string;
   current_term: 1 | 2 | 3;
   current_session: string;
+  next_term_begins?: string;
 }
 
 export const AI_REMARK_PROMPT = (name: string, avg: number, total: number, subjects: number, position: string) => `

@@ -513,6 +513,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
     setIsSavingSettings(true);
     try {
       await db.settings.update(settingsData);
+      await refreshData();
       alert("Institutional settings synchronized successfully.");
     } catch (err: any) {
       alert("Settings Registry Error: " + err.message);
@@ -659,6 +660,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
             </div>
             <div className="bg-blue-900 text-white px-6 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.3em]">Official Academic Terminal Record</div>
             <p className="text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-2">{settingsData.current_session} Session • Term {adminSelectedTerm}</p>
+            <p className="text-[10px] font-bold text-blue-900 uppercase tracking-widest mt-1">
+              Next Term Begins: {settingsData.next_term_begins ? new Date(settingsData.next_term_begins).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '________________'}
+            </p>
         </div>
 
         <div className="grid grid-cols-4 gap-0 mb-6 bg-slate-50 border-y-2 border-blue-900 relative z-10 text-black">
@@ -1001,6 +1005,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
                                     <option value={3}>Term 3 (Third Term)</option>
                                     </select>
                                 </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Next Term Begins</label>
+                                <input type="date" className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-blue-600" value={settingsData.next_term_begins || ''} onChange={e => setSettingsData({...settingsData, next_term_begins: e.target.value})} />
                             </div>
 
                             <div className="space-y-2">
