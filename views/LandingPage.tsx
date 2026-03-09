@@ -98,63 +98,68 @@ const LandingPage: React.FC = () => {
         )}
       </nav>
 
-      {/* Hero Section */}
-      <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-school-royal">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1544717297-fa95b3ee51f3?auto=format&fit=crop&q=80&w=1600" 
-            alt="Real Nigerian Students in classroom" 
-            className="w-full h-full object-cover opacity-30 mix-blend-overlay scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-tr from-school-royal via-school-royal/60 to-transparent" />
+      {/* Hero Section - Inspired by the sample image */}
+      <section id="home" className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-[85%] bg-school-royal rounded-b-[4rem] md:rounded-b-[8rem] z-0 shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-br from-school-royal via-school-royal/80 to-blue-900/50 opacity-50" />
+          <div className="absolute top-20 right-20 w-64 h-64 bg-school-gold/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pt-20">
-          <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-12 duration-1000">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8 animate-in fade-in slide-in-from-left-12 duration-1000">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white/90 text-[10px] font-black uppercase tracking-[0.3em]">
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white/90 text-[10px] font-black uppercase tracking-[0.3em]">
                 <Sparkles size={14} className="text-school-gold" />
-                Wukari's Center of Excellence
+                Online & Physical Learning
               </div>
-              <h2 className="text-5xl md:text-8xl font-black text-white leading-[0.9] tracking-tighter">
-                Nurturing Leaders of <br />
-                <span className="text-school-gold italic">Tomorrow</span>
+              <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter uppercase">
+                SCHOOL FOR <br />
+                <span className="text-school-gold">LEADERS</span> <br />
+                <span className="text-3xl md:text-5xl opacity-90">OF TOMORROW</span>
               </h2>
-              <p className="text-lg md:text-2xl text-white/80 font-medium max-w-3xl leading-relaxed">
-                Welcome to Prince and Princess International School, Wukari. A center dedicated to academic success, moral uprightness, and lifelong achievement. Every child is a leader in the making.
-              </p>
+              <div className="flex flex-col md:flex-row gap-8 pt-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-school-gold flex items-center justify-center text-school-royal font-bold text-xs">+</div>
+                  <p className="text-white/80 text-sm font-bold leading-tight">Nurturing your child's <br /> potential from day one</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-school-gold flex items-center justify-center text-school-royal font-bold text-xs">+</div>
+                  <p className="text-white/80 text-sm font-bold leading-tight">Small class sizes for <br /> personalized attention</p>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button 
                 onClick={() => navigateTo('auth', 'signup')}
-                className="group px-10 py-5 bg-white text-school-royal rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-school-gold hover:scale-105 transition-all duration-500 shadow-2xl flex items-center justify-center gap-3"
+                className="group px-10 py-5 bg-school-gold text-school-royal rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-white hover:scale-105 transition-all duration-500 shadow-2xl flex items-center justify-center gap-3"
               >
-                Join Our Academy <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
-              </button>
-              <button 
-                onClick={() => {
-                  const el = document.querySelector('#about');
-                  el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-                className="px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/20 text-white rounded-2xl font-black uppercase tracking-widest text-[11px] hover:bg-white/10 transition-all duration-500"
-              >
-                Explore More
+                JOIN OUR ACADEMY <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" />
               </button>
             </div>
+          </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 pt-10 border-t border-white/10 max-w-2xl">
-              {[
-                { label: 'Academic Levels', val: 'JSS 1 – SSS 3' },
-                { label: 'Location', val: 'Wukari, Taraba State' },
-                { label: 'Philosophy', val: 'Character & Skill' }
-              ].map((item, i) => (
-                <div key={i} className="space-y-1">
-                  <p className="text-school-gold text-[9px] font-black uppercase tracking-[0.2em]">{item.label}</p>
-                  <p className="text-white font-bold text-sm tracking-tight">{item.val}</p>
+          <div className="relative hidden lg:block animate-in fade-in slide-in-from-right-12 duration-1000">
+            <div className="relative z-10 rounded-[4rem] overflow-hidden border-[12px] border-white/10 shadow-2xl">
+              <img 
+                src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" 
+                alt="Happy Student" 
+                className="w-full h-[600px] object-cover"
+              />
+              <div className="absolute top-10 right-10 bg-white p-6 rounded-3xl shadow-2xl animate-bounce duration-[3000ms]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-school-gold rounded-full flex items-center justify-center text-school-royal">
+                    <Star size={20} fill="currentColor" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-slate-400 leading-none">Top Rated</p>
+                    <p className="text-sm font-black text-school-royal">Excellence</p>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-school-gold rounded-full z-0" />
           </div>
         </div>
       </section>
@@ -173,85 +178,69 @@ const LandingPage: React.FC = () => {
         </div>
       </div>
 
-      {/* About Us Section */}
-      <section id="about" className="py-24 md:py-32 bg-slate-50 relative overflow-hidden">
+      {/* Features Section - 4 Cards as in sample */}
+      <section id="about" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            {/* Animated Side Bar Section */}
-            <div className="relative group min-h-[400px] md:min-h-[550px] flex items-center justify-center">
-              <div className="absolute -top-10 -left-10 w-64 h-64 bg-school-gold/20 rounded-full blur-[100px]" />
-              
-              {/* Replacement for large image with animations and text */}
-              <div className="relative z-10 w-full h-full min-h-[400px] md:min-h-[500px] rounded-[3.5rem] bg-gradient-to-br from-school-royal to-[#001D4D] shadow-2xl border-[12px] border-white overflow-hidden flex flex-col items-center justify-center p-12 text-center transition-all duration-700 group-hover:scale-[1.01] group-hover:shadow-school-royal/20">
-                <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
-                   <div className="absolute top-10 left-10 animate-pulse duration-[3000ms]"><BookOpen size={48} className="text-white" /></div>
-                   <div className="absolute bottom-20 right-10 animate-bounce duration-[4000ms]"><GraduationCap size={64} className="text-white" /></div>
-                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20"><School size={300} className="text-white" /></div>
-                   <div className="absolute top-20 right-20 animate-pulse duration-[2500ms]"><Star size={32} className="text-school-gold" /></div>
-                </div>
-                
-                <div className="relative z-20 space-y-8">
-                  <div className="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-3xl mx-auto flex items-center justify-center border border-white/20 animate-pulse">
-                    <Sparkles className="text-school-gold" size={40} />
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none">
-                      Academic <br />
-                      <span className="text-school-gold italic">Excellence</span>
-                    </h3>
-                    <div className="h-1.5 w-24 bg-school-gold mx-auto rounded-full" />
-                    <p className="text-white/60 text-[10px] md:text-xs font-black uppercase tracking-[0.4em] leading-relaxed">
-                      Knowledge • Integrity • Success
-                    </p>
+          <div className="text-center mb-16 space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">Our Core Values</h3>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 uppercase">Developing Students From All Sides</h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { id: 1, title: "Academic Excellence", desc: "We provide a rigorous curriculum that prepares students for global challenges.", icon: BookOpen, color: "bg-blue-50 text-blue-600" },
+              { id: 2, title: "Moral Integrity", desc: "Instilling strong values and character in every student through guidance.", icon: ShieldCheck, color: "bg-purple-50 text-purple-600" },
+              { id: 3, title: "Skill Acquisition", desc: "Practical skills in technology, arts, and crafts to prepare for the future.", icon: Lightbulb, color: "bg-emerald-50 text-emerald-600" },
+              { id: 4, title: "Career Guidance", desc: "Helping students discover their passions and path to professional success.", icon: Briefcase, color: "bg-amber-50 text-amber-600" }
+            ].map((feature) => (
+              <div key={feature.id} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 group">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center font-black text-slate-300">{feature.id}</div>
+                  <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}>
+                    <feature.icon size={28} />
                   </div>
                 </div>
+                <h4 className="text-lg font-black uppercase tracking-tight text-slate-800 mb-4">{feature.title}</h4>
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">{feature.desc}</p>
               </div>
-              
-              {/* Maintained Co-Ed Badge */}
-              <div className="absolute -bottom-8 -right-8 bg-school-royal p-8 rounded-[2.5rem] shadow-2xl z-20 text-white max-w-[210px] border-4 border-white animate-in zoom-in-50 duration-700 delay-300">
-                <p className="text-4xl font-black text-school-gold leading-none">Co-Ed</p>
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mt-3">Established for holistic secondary development</p>
+            ))}
+          </div>
+
+          <div className="mt-16 p-8 bg-school-royal rounded-[3rem] flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 bg-school-gold rounded-2xl flex items-center justify-center text-school-royal shadow-lg">
+                <Award size={32} />
+              </div>
+              <div>
+                <h4 className="text-xl font-black text-white uppercase tracking-tighter">A Promising Future Awaits</h4>
+                <p className="text-white/60 text-sm font-medium">Education is the first step to a successful life. We help you take it.</p>
               </div>
             </div>
+            <button onClick={() => navigateTo('auth', 'signup')} className="px-8 py-4 bg-white text-school-royal rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-school-gold transition-colors">
+              Start Learning Now
+            </button>
+          </div>
+        </div>
+      </section>
 
-            <div className="space-y-10">
-              <div className="space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-school-royal/5 rounded-full text-school-royal text-[10px] font-black uppercase tracking-widest">
-                  <Library size={14} /> Who We Are
+      {/* Stats Section */}
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { label: "Success Rate", value: "100%", icon: Award, color: "text-blue-600" },
+              { label: "Qualified Teachers", value: "50+", icon: Users, color: "text-orange-500" },
+              { label: "Active Students", value: "1000+", icon: GraduationCap, color: "text-emerald-600" },
+              { label: "Years Experience", value: "15+", icon: Clock, color: "text-purple-600" }
+            ].map((stat, i) => (
+              <div key={i} className="text-center space-y-2 group">
+                <div className={`w-12 h-12 mx-auto rounded-2xl bg-white shadow-sm flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform`}>
+                  <stat.icon size={24} />
                 </div>
-                <h2 className="text-4xl md:text-7xl font-black tracking-tighter leading-[0.85] text-slate-900">
-                  Established for Quality <br />
-                  <span className="text-school-royal">Education</span>
-                </h2>
-                <div className="space-y-6 text-lg text-slate-600 leading-relaxed font-medium">
-                  <p>
-                    Prince and Princess International School, Wukari is a co-educational secondary school established to provide quality education rooted in sound moral values and academic excellence.
-                  </p>
-                  <p>
-                    We offer both Junior Secondary School (JSS 1–3) and Senior Secondary School (SSS 1–3) programs in line with the Nigerian educational curriculum. Our goal is to raise students who are intellectually sound, morally disciplined, socially responsible, and career-focused.
-                  </p>
-                </div>
+                <p className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter">{stat.value}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
               </div>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                {[
-                  "Qualified & Experienced Teachers",
-                  "Strong Discipline & Moral Training",
-                  "Conducive Learning Environment",
-                  "Student-centered Approach",
-                  "Academic & Personal Growth"
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 group transition-all hover:bg-school-royal hover:text-white">
-                    <CheckCircle2 className="text-school-gold shrink-0" size={20} />
-                    <span className="text-xs font-black uppercase tracking-tight">{item}</span>
-                  </div>
-                ))}
-              </div>
-              
-              <p className="text-sm text-slate-500 italic border-l-4 border-school-gold pl-6 py-2">
-                "We work closely with parents and guardians to ensure that every child reaches their full potential."
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -327,77 +316,38 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Academic Programmes */}
-      <section id="academics" className="py-32 bg-slate-900 text-white relative overflow-hidden">
+      {/* Programs Section - Colorful cards as in sample */}
+      <section id="academics" className="py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 rounded-full text-school-gold text-[10px] font-black uppercase tracking-widest border border-white/10">
-              <BookOpen size={14} /> Academic Excellence
-            </div>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">Curriculum Focus</h2>
-            <p className="text-white/60 font-medium text-lg leading-relaxed">
-              We offer a robust academic program designed to meet national and global standards, preparing students for excellence in WAEC, NECO, and beyond.
-            </p>
+          <div className="text-center mb-16 space-y-4">
+            <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">Academic Pathways</h3>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 uppercase">Choose the Right Program</h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Junior Section */}
-            <div className="bg-white/5 border border-white/10 p-12 rounded-[4rem] space-y-12 backdrop-blur-sm relative overflow-hidden group">
-              <div className="absolute -top-20 -right-20 p-8 opacity-5 transition-transform group-hover:scale-125">
-                <Library size={300} />
-              </div>
-              <div className="flex items-center justify-between relative z-10">
-                <div>
-                  <h3 className="text-3xl font-black uppercase tracking-tighter text-school-gold">Junior Secondary</h3>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40">Levels: JSS 1 – JSS 3</p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "JUNIOR MIDDLE", age: "10-12 YEARS", duration: "3 YEARS", color: "bg-blue-600", desc: "Foundation years focusing on core subjects and character building.", price: "JSS 1-3" },
+              { title: "SENIOR HIGH", age: "13-15 YEARS", duration: "3 YEARS", color: "bg-orange-500", desc: "Specialized streams in Sciences, Arts, and Commercial subjects.", price: "SSS 1-3" },
+              { title: "TECH SUPER", age: "10-15 YEARS", duration: "CONTINUOUS", color: "bg-emerald-600", desc: "Advanced computer studies, coding, and digital literacy programs.", price: "EXTRAS" },
+              { title: "LEAD EXPERT", age: "12-15 YEARS", duration: "ANNUAL", color: "bg-purple-600", desc: "Leadership training, public speaking, and community service projects.", price: "LEADERS" }
+            ].map((program, i) => (
+              <div key={i} className={`${program.color} p-8 rounded-[3rem] text-white space-y-6 shadow-xl hover:scale-[1.05] transition-all duration-500 flex flex-col`}>
+                <div className="flex gap-2">
+                  <span className="px-3 py-1 bg-white/20 rounded-full text-[9px] font-black uppercase tracking-widest">{program.age}</span>
+                  <span className="px-3 py-1 bg-white/20 rounded-full text-[9px] font-black uppercase tracking-widest">{program.duration}</span>
                 </div>
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
-                  <Library className="text-white" size={32} />
+                <div className="flex-1 space-y-4">
+                  <h4 className="text-2xl font-black tracking-tighter uppercase">{program.title}</h4>
+                  <p className="text-white/80 text-sm font-medium leading-relaxed">{program.desc}</p>
                 </div>
-              </div>
-              <p className="text-white/70 font-medium relative z-10 leading-relaxed">Our junior secondary program lays a strong foundation for future academic rigor through specialized core subjects.</p>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-4 relative z-10">
-                {[
-                  "English Language", "Mathematics", "Basic Science", 
-                  "Social Studies", "Business Studies", "Computer Studies",
-                  "Civic Education", "Religious Studies", "Cultural & Creative Arts"
-                ].map((s) => (
-                  <div key={s} className="flex items-center gap-3 text-xs font-black text-white/60 uppercase tracking-tight">
-                    <div className="w-2 h-2 rounded-full bg-school-gold shadow-sm" />
-                    {s}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Senior Section */}
-            <div className="bg-white/5 border border-white/10 p-12 rounded-[4rem] space-y-12 backdrop-blur-sm relative overflow-hidden group">
-              <div className="absolute -top-20 -right-20 p-8 opacity-5 transition-transform group-hover:scale-125">
-                <GraduationCap size={300} />
-              </div>
-              <div className="flex items-center justify-between relative z-10">
-                <div>
-                  <h3 className="text-3xl font-black uppercase tracking-tighter text-school-gold">Senior Secondary</h3>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40">Levels: SSS 1 – SSS 3</p>
-                </div>
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
-                  <GraduationCap className="text-white" size={32} />
+                <div className="pt-6 border-t border-white/20 flex items-center justify-between">
+                  <span className="text-lg font-black">{program.price}</span>
+                  <button onClick={() => navigateTo('auth', 'signup')} className="text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform">
+                    Details <ChevronRight size={14} />
+                  </button>
                 </div>
               </div>
-              <p className="text-white/70 font-medium relative z-10 leading-relaxed">Preparing students for WAEC, NECO, and future professional careers with a focus on core science and humanities disciplines.</p>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-4 relative z-10">
-                {[
-                  "English Language", "Mathematics", "Biology", 
-                  "Chemistry", "Physics", "Economics",
-                  "Government", "Literature in English", "Computer Studies"
-                ].map((s) => (
-                  <div key={s} className="flex items-center gap-3 text-xs font-black text-white/60 uppercase tracking-tight">
-                    <div className="w-2 h-2 rounded-full bg-school-gold shadow-sm" />
-                    {s}
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -489,85 +439,67 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Footer / Contact */}
-      <footer id="contact" className="bg-slate-50 border-t border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 pt-24 pb-12">
-          <div className="grid md:grid-cols-4 gap-16">
-            <div className="md:col-span-2 space-y-10">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-school-royal text-white rounded-2xl flex items-center justify-center font-black text-3xl shadow-xl">P</div>
-                <div>
-                  <h3 className="text-2xl font-black uppercase tracking-tighter text-slate-900 leading-none mb-1">Prince & Princess</h3>
-                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">International School</p>
-                </div>
-              </div>
-              <p className="text-slate-500 font-bold text-lg leading-relaxed max-w-md">
-                Dedicated to academic success, moral uprightness, and lifelong achievement. Empowering the next generation of Nigerian leaders since inception.
+      {/* Contact/Footer Section - Inspired by the sample footer */}
+      <section id="contact" className="py-24 bg-school-royal relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-none uppercase">
+                DON'T UNDERSTAND <br />
+                <span className="text-school-gold">SOMETHING?</span>
+              </h2>
+              <p className="text-white/70 text-lg font-medium max-w-md">
+                Leave a request for a free consultation. We will help you understand our programs and enrollment process.
               </p>
-              <div className="flex gap-4">
-                <button 
-                  onClick={() => alert("Connecting to Registry Hotline...")}
-                  className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-school-royal hover:bg-school-royal hover:text-white transition-all shadow-sm hover:shadow-xl"
-                >
-                  <Phone size={20} />
-                </button>
-                <button 
-                  onClick={() => window.location.href = 'mailto:info@ppisms.edu'}
-                  className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-school-royal hover:bg-school-royal hover:text-white transition-all shadow-sm hover:shadow-xl"
-                >
-                  <Mail size={20} />
-                </button>
-                <button 
-                  onClick={() => window.open('https://maps.google.com/?q=Wukari,Taraba,Nigeria', '_blank')}
-                  className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-school-royal hover:bg-school-royal hover:text-white transition-all shadow-sm hover:shadow-xl"
-                >
-                  <MapPin size={20} />
-                </button>
+              <div className="flex items-center gap-4 text-white/50 text-xs font-black uppercase tracking-widest">
+                <Clock size={16} className="text-school-gold" />
+                <span>Response time: 15 minutes</span>
+              </div>
+              
+              <div className="pt-8 border-t border-white/10 flex gap-6">
+                <div className="space-y-1">
+                  <p className="text-school-gold text-[9px] font-black uppercase tracking-widest">Email Us</p>
+                  <p className="text-white font-bold text-sm">info@ppisms.edu.ng</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-school-gold text-[9px] font-black uppercase tracking-widest">Visit Us</p>
+                  <p className="text-white font-bold text-sm">Wukari, Taraba State</p>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-8">
-              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 border-b-2 border-school-gold pb-2 w-fit">Navigation</h4>
-              <ul className="space-y-4">
-                {navLinks.slice(1).map((link) => (
-                  <li key={link.name}>
-                    <a href={link.href} onClick={(e) => handleNavClick(e, link.href)} className="text-sm font-bold text-slate-500 hover:text-school-royal transition-colors uppercase tracking-widest">{link.name}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-8">
-              <h4 className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 border-b-2 border-school-gold pb-2 w-fit">Location & Visit</h4>
-              <div className="space-y-6">
-                <div className="flex gap-4 items-start text-slate-600">
-                  <MapPin className="text-school-gold shrink-0 mt-1" size={24} />
-                  <p className="text-sm font-bold leading-relaxed uppercase tracking-tight">
-                    Prince & Princess International <br />
-                    Wukari, Taraba State, <br />
-                    Nigeria.
-                  </p>
-                </div>
-                <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Enquiries & Admissions</p>
-                   <p className="text-xs font-bold text-slate-700 leading-relaxed italic">
-                     For admissions and enquiries, please visit the school premises or contact the school management.
-                   </p>
-                </div>
+            <div className="bg-white/5 backdrop-blur-xl p-10 rounded-[4rem] border border-white/10 shadow-2xl space-y-6">
+              <div className="space-y-4">
+                <input type="text" placeholder="Your Name" className="w-full p-5 bg-white rounded-2xl text-slate-900 font-bold outline-none focus:ring-4 focus:ring-school-gold/30 transition-all" />
+                <input type="tel" placeholder="Phone Number" className="w-full p-5 bg-white rounded-2xl text-slate-900 font-bold outline-none focus:ring-4 focus:ring-school-gold/30 transition-all" />
               </div>
+              <button className="w-full py-5 bg-school-gold text-school-royal rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-xl">
+                SUBMIT REQUEST
+              </button>
+              <p className="text-[9px] text-white/40 text-center uppercase tracking-widest font-bold">
+                By clicking, you agree to our privacy policy
+              </p>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="mt-24 pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-              &copy; {new Date().getFullYear()} Prince and Princess International School. Built for Educational Integrity.
-            </p>
-            <div className="flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.4em] text-slate-300">
-              <span className="hover:text-school-royal transition-colors cursor-default">Knowledge</span>
-              <span className="hover:text-school-royal transition-colors cursor-default">Moral</span>
-              <span className="hover:text-school-royal transition-colors cursor-default">Skill</span>
-              <span className="hover:text-school-royal transition-colors cursor-default">Career</span>
+      <footer className="bg-school-royal py-12 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white text-school-royal rounded-xl flex items-center justify-center font-black text-2xl shadow-xl">P</div>
+            <div>
+              <h3 className="text-lg font-black uppercase tracking-tighter text-white leading-none">Prince & Princess</h3>
+              <p className="text-[8px] font-black uppercase tracking-[0.4em] text-white/40">International School</p>
             </div>
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-white/30">
+            &copy; {new Date().getFullYear()} PPISMS. All Rights Reserved.
+          </p>
+          <div className="flex gap-6">
+            {navLinks.slice(0, 3).map(l => (
+              <a key={l.name} href={l.href} onClick={(e) => handleNavClick(e, l.href)} className="text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-school-gold transition-colors">{l.name}</a>
+            ))}
           </div>
         </div>
       </footer>

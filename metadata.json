@@ -1,6 +1,6 @@
 {
-  "name": "PPISMS REMIX",
-  "description": "A comprehensive, production-ready school management system for Prince and Princess International School, featuring role-based dashboards, result computation, and printable report cards.",
+  "name": "Prince & Princess International School Management System (PPISMS)",
+  "description": "A modern, comprehensive school management system for Prince and Princess International School, featuring role-based dashboards, result computation, and printable report cards.",
   "requestFramePermissions": [
     "camera"
   ]
