@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { db, calculatePositions } from '../db';
 import { useAuth } from '../App';
 import { Student, Score, Subject, SchoolClass, FormTeacherRemark, SchoolSettings } from '../types';
-import { getGrade, getRemark, getAutoRemark, getOrdinal } from '../constants';
+import { getGrade, getRemark, getAutoRemark, getOrdinal, getGradeRemark } from '../constants';
 import { Printer, CheckCircle, Search, FileText, ChevronRight, LayoutGrid, List, Award, TrendingUp, Calendar, Hash, X, FileSpreadsheet, ShieldCheck, ShieldAlert, Clock } from 'lucide-react';
 
 const FormTeacherDashboard: React.FC = () => {
@@ -315,6 +315,7 @@ const FormTeacherDashboard: React.FC = () => {
                   <th className="p-4 text-xs font-black uppercase tracking-widest text-center">Exam (60)</th>
                   <th className="p-4 text-xs font-black uppercase tracking-widest text-center">Total (100)</th>
                   <th className="p-4 text-xs font-black uppercase tracking-widest text-center">Grade</th>
+                  <th className="p-4 text-xs font-black uppercase tracking-widest text-center">Remark</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -330,6 +331,7 @@ const FormTeacherDashboard: React.FC = () => {
                        <td className="p-4 text-center">
                          <span className="font-black text-sm bg-slate-100 px-4 py-1.5 rounded-lg border border-slate-200 uppercase">{getGrade(total)}</span>
                        </td>
+                       <td className="p-4 text-center text-xs font-bold uppercase">{getGradeRemark(total)}</td>
                      </tr>
                    );
                  })}

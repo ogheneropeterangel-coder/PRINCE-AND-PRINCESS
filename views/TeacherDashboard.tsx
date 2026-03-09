@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../db';
 import { useAuth } from '../App';
 import { Score, TeacherSubject, Student, Subject, SchoolClass, SchoolSettings } from '../types';
-import { getGrade, getRemark } from '../constants';
+import { getGrade, getRemark, getGradeRemark } from '../constants';
 import { Save, AlertCircle, Printer, MessageSquare, TrendingUp, Eye, X, BookOpen } from 'lucide-react';
 
 const TeacherDashboard: React.FC = () => {

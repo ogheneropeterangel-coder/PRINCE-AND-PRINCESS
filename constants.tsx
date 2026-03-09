@@ -52,6 +52,13 @@ export const getAutoRemark = (average: number) => {
   return "Poor performance. You must dedicate more time to your studies.";
 };
 
+export const getGradeRemark = (score: number) => {
+  if (score >= 70) return "V.Good";
+  if (score >= 50) return "Good";
+  if (score >= 40) return "Fair";
+  return "Fail";
+};
+
 export const getOrdinal = (n: number) => {
   const s = ["th", "st", "nd", "rd"];
   const v = n % 100;

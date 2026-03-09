@@ -4,7 +4,7 @@ import { User, UserRole, SchoolClass, Subject, Student, ClassLevel, Gender, Teac
 import StatsCard from '../components/StatsCard';
 import { StatsSkeleton, TableSkeleton } from '../components/Skeleton';
 import { supabase } from '../lib/supabase';
-import { getGrade, getOrdinal, getAutoRemark } from '../constants';
+import { getGrade, getOrdinal, getAutoRemark, getGradeRemark } from '../constants';
 import { 
   Users, GraduationCap, Book, School, Plus, Search, Trash2, Edit2, 
   Link as LinkIcon, Save, X, Phone, MapPin, 
@@ -63,6 +63,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
   const [targetClassId, setTargetClassId] = useState<string>('');
   const [selectedPromotionStudentIds, setSelectedPromotionStudentIds] = useState<string[]>([]);
   const [isPromoting, setIsPromoting] = useState(false);
+  const [showPromotionConfirm, setShowPromotionConfirm] = useState(false);
 
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     show: boolean;
@@ -439,25 +440,46 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
     }
   };
 
-  const handleBulkPromotion = async () => {
+  const handleBulkPromotion = () => {
     if (!targetClassId || selectedPromotionStudentIds.length === 0) {
       alert("Please select a destination class and at least one student.");
       return;
     }
+    setShowPromotionConfirm(true);
+  };
 
-    if (!confirm(`Are you sure you want to promote ${selectedPromotionStudentIds.length} students to ${classes.find(c => c.id === targetClassId)?.name}?`)) {
-      return;
-    }
-
+  const executePromotion = async () => {
+    setShowPromotionConfirm(false);
     setIsPromoting(true);
     try {
-      const promises = selectedPromotionStudentIds.map(id => {
+      // 1. Update students one by one using the db service to ensure all logic is followed
+      for (const id of selectedPromotionStudentIds) {
         const student = students.find(s => s.id === id);
-        if (!student) return Promise.resolve();
-        return db.students.save({ ...student, class_id: targetClassId });
-      });
-      await Promise.all(promises);
-      alert("Selected students promoted successfully.");
+        if (student) {
+          await db.students.save({ ...student, class_id: targetClassId });
+        }
+      }
+
+      // 2. Synchronize scores and remarks for current session/term
+      if (settingsData) {
+        // We use direct supabase here for efficiency as there's no bulk update in db service for these
+        await Promise.all([
+          supabase
+            .from('scores')
+            .update({ class_id: targetClassId })
+            .in('student_id', selectedPromotionStudentIds)
+            .eq('term', adminSelectedTerm)
+            .eq('session', settingsData.current_session),
+          supabase
+            .from('remarks')
+            .update({ class_id: targetClassId })
+            .in('student_id', selectedPromotionStudentIds)
+            .eq('term', adminSelectedTerm)
+            .eq('session', settingsData.current_session)
+        ]);
+      }
+
+      alert("Selected students promoted and details synchronized successfully.");
       setSelectedPromotionStudentIds([]);
       await refreshData();
     } catch (err: any) {
@@ -697,6 +719,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
                     <th className="py-2 px-2 text-[9px] font-black uppercase tracking-widest text-center w-12">Exam</th>
                     <th className="py-2 px-2 text-[9px] font-black uppercase tracking-widest text-center w-12 bg-blue-800">Total</th>
                     <th className="py-2 px-3 text-[9px] font-black uppercase tracking-widest text-center w-16">Grade</th>
+                    <th className="py-2 px-3 text-[9px] font-black uppercase tracking-widest text-center w-20">Remark</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-black">
@@ -712,6 +735,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
                         <td className="py-1.5 px-2 text-center font-black text-blue-900 bg-slate-50/30 text-[11px]">{total || '0'}</td>
                         <td className="py-1.5 px-3 text-center">
                           <span className={`inline-flex items-center justify-center w-5 h-5 rounded font-black text-[9px] uppercase border ${total >= 70 ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : total >= 60 ? 'bg-blue-50 border-blue-200 text-blue-700' : total >= 50 ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-rose-50 border-rose-200 text-rose-700'}`}>{getGrade(total)}</span>
+                        </td>
+                        <td className="py-1.5 px-3 text-center">
+                          <span className="text-[9px] font-bold uppercase text-slate-600">{getGradeRemark(total)}</span>
                         </td>
                       </tr>
                     );
@@ -1443,6 +1469,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
           <div className="bg-white rounded-[3rem] w-full max-w-lg overflow-hidden shadow-2xl">
             <div className="bg-rose-50 p-10 flex flex-col items-center text-center gap-4"><div className="p-5 bg-rose-500 text-white rounded-[2rem] shadow-xl mb-2"><AlertTriangle size={48} /></div><h3 className="text-2xl font-black text-rose-600 uppercase tracking-tighter">Caution</h3><p className="text-sm font-bold text-slate-500 leading-relaxed">{deleteConfirmation.message}</p></div>
             <div className="p-10 flex gap-4"><button onClick={() => setDeleteConfirmation({...deleteConfirmation, show: false})} className="flex-1 py-4.5 bg-slate-100 font-black rounded-2xl uppercase tracking-widest text-[10px]">Abort</button><button onClick={executeDelete} className="flex-1 py-4.5 bg-rose-600 text-white font-black rounded-2xl uppercase tracking-widest text-[10px]">Confirm Delete</button></div>
+          </div>
+        </div>
+      )}
+
+      {showPromotionConfirm && (
+        <div className="fixed inset-0 bg-slate-900/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6 no-print">
+          <div className="bg-white rounded-[3rem] w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="bg-blue-50 p-10 flex flex-col items-center text-center gap-4">
+              <div className="p-5 bg-blue-600 text-white rounded-[2rem] shadow-xl mb-2">
+                <TrendingUp size={48} />
+              </div>
+              <h3 className="text-2xl font-black text-blue-600 uppercase tracking-tighter">Confirm Promotion</h3>
+              <p className="text-sm font-bold text-slate-500 leading-relaxed">
+                You are about to promote <span className="text-blue-600 font-black">{selectedPromotionStudentIds.length}</span> students to <span className="text-blue-600 font-black">{classes.find(c => c.id === targetClassId)?.name}</span>. 
+                This will synchronize their academic records for the current session.
+              </p>
+            </div>
+            <div className="p-10 flex gap-4">
+              <button onClick={() => setShowPromotionConfirm(false)} className="flex-1 py-4.5 bg-slate-100 font-black rounded-2xl uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all">Cancel</button>
+              <button onClick={executePromotion} className="flex-1 py-4.5 bg-blue-600 text-white font-black rounded-2xl uppercase tracking-widest text-[10px] hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">Confirm Promotion</button>
+            </div>
           </div>
         </div>
       )}

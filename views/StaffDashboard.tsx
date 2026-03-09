@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { db, calculatePositions } from '../db';
 import { useAuth } from '../App';
 import { Score, TeacherSubject, Student, Subject, SchoolClass, FormTeacherRemark, SchoolSettings, AI_REMARK_PROMPT } from '../types';
-import { getGrade, getRemark, getAutoRemark, getOrdinal } from '../constants';
+import { getGrade, getRemark, getAutoRemark, getOrdinal, getGradeRemark } from '../constants';
 // Fixed: Added Clock to lucide-react imports
 import { Save, Printer, X, BookOpen, FileSpreadsheet, GraduationCap, Search, Award, TrendingUp, Hash, AlertCircle, Sparkles, CheckCircle, ShieldCheck, Check, Send, Clock } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
@@ -475,6 +475,7 @@ const StaffDashboard: React.FC = () => {
                      <th className="p-4 text-xs font-black uppercase text-center">Exam (60)</th>
                      <th className="p-4 text-xs font-black uppercase text-center">Total</th>
                      <th className="p-4 text-xs font-black uppercase text-center">Grade</th>
+                      <th className="p-4 text-xs font-black uppercase text-center">Remark</th>
                   </tr>
                </thead>
                <tbody>
@@ -488,6 +489,7 @@ const StaffDashboard: React.FC = () => {
                            <td className="p-4 text-center">{s?.exam || '-'}</td>
                            <td className="p-4 text-center font-black">{total || '-'}</td>
                            <td className="p-4 text-center font-black">{getGrade(total)}</td>
+                            <td className="p-4 text-center text-xs font-bold uppercase">{getGradeRemark(total)}</td>
                         </tr>
                      );
                   })}

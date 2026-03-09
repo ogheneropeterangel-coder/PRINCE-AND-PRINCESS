@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { db, calculatePositions } from '../db';
 import { useAuth } from '../App';
 import { Score, Student, Subject, SchoolClass, FormTeacherRemark, User, SchoolSettings } from '../types';
-import { getGrade, getOrdinal, getAutoRemark } from '../constants';
+import { getGrade, getOrdinal, getAutoRemark, getGradeRemark } from '../constants';
 import { StatsSkeleton, TableSkeleton } from '../components/Skeleton';
 import { 
   Award, Printer, User as UserIcon, Users, TrendingUp, BookOpen, Eye, X, 
@@ -257,6 +257,7 @@ const StudentDashboard: React.FC = () => {
                     <th className="py-2 px-2 text-[9px] font-black uppercase tracking-widest text-center w-12">Exam</th>
                     <th className="py-2 px-2 text-[9px] font-black uppercase tracking-widest text-center w-12 bg-blue-800">Total</th>
                     <th className="py-2 px-3 text-[9px] font-black uppercase tracking-widest text-center w-16">Grade</th>
+                    <th className="py-2 px-3 text-[9px] font-black uppercase tracking-widest text-center w-20">Remark</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-black">
@@ -272,6 +273,9 @@ const StudentDashboard: React.FC = () => {
                         <td className="py-1.5 px-2 text-center font-black text-blue-900 bg-slate-50/30 text-[11px]">{total || '0'}</td>
                         <td className="py-1.5 px-3 text-center">
                           <span className={`inline-flex items-center justify-center w-5 h-5 rounded font-black text-[9px] uppercase border ${total >= 70 ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : total >= 60 ? 'bg-blue-50 border-blue-200 text-blue-700' : total >= 50 ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-rose-50 border-rose-200 text-rose-700'}`}>{getGrade(total)}</span>
+                        </td>
+                        <td className="py-1.5 px-3 text-center">
+                          <span className="text-[9px] font-bold uppercase text-slate-600">{getGradeRemark(total)}</span>
                         </td>
                       </tr>
                     );
