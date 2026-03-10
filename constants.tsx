@@ -19,8 +19,8 @@ export const CLASSES_LIST = [
 export const DEFAULT_SETTINGS = {
   name: "Prince and Princess International School",
   motto: "Character, Skill and Career",
-  logo: "https://api.dicebear.com/7.x/initials/svg?seed=PP&backgroundColor=002366",
-  primaryColor: "#002366",
+  logo: "https://api.dicebear.com/7.x/initials/svg?seed=PP&backgroundColor=c1121f",
+  primaryColor: "#c1121f",
   currentTerm: 1 as const,
   currentSession: "2023/2024",
   next_term_begins: "2024-09-01"
@@ -66,4 +66,4 @@ export const getOrdinal = (n: number) => {
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 };
 
-export const PRINCIPAL_SIGNATURE_STYLE = "font-family: 'Brush Script MT', cursive; font-size: 2.5rem; color: #002366;";
+export const PRINCIPAL_SIGNATURE_STYLE = "font-family: 'Brush Script MT', cursive; font-size: 2.5rem; color: #c1121f;";

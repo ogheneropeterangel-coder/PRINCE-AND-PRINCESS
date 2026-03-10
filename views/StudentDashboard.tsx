@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { db, calculatePositions } from '../db';
 import { useAuth } from '../App';
-import { Score, Student, Subject, SchoolClass, FormTeacherRemark, User, SchoolSettings } from '../types';
+import { Score, Student, Subject, SchoolClass, FormTeacherRemark, User, SchoolSettings, TeacherSubject } from '../types';
 import { getGrade, getOrdinal, getAutoRemark, getGradeRemark } from '../constants';
 import { StatsSkeleton, TableSkeleton } from '../components/Skeleton';
 import { 
@@ -15,6 +15,7 @@ const StudentDashboard: React.FC = () => {
   const [studentInfo, setStudentInfo] = useState<Student | null>(null);
   const [scores, setScores] = useState<Score[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [teacherSubjects, setTeacherSubjects] = useState<TeacherSubject[]>([]);
   const [cls, setCls] = useState<SchoolClass | null>(null);
   const [formTeacher, setFormTeacher] = useState<User | null>(null);
   const [remark, setFormTeacherRemark] = useState<FormTeacherRemark | null>(null);
@@ -82,7 +83,12 @@ const StudentDashboard: React.FC = () => {
           }
           
           const allSubjects = await db.subjects.getAll();
-          setSubjects(allSubjects);
+          const allTS = await db.teacherSubjects.getAll();
+          const classTS = allTS.filter(ts => ts.class_id === student.class_id);
+          setTeacherSubjects(classTS);
+          setSubjects(allSubjects.filter(sub => 
+            classTS.some(ts => ts.subject_id === sub.id)
+          ));
           
           const allRemarks = await db.remarks.getAll();
           const r = allRemarks.find(rem => 
@@ -264,7 +270,7 @@ const StudentDashboard: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-black">
-                  {subjects.filter(sub => sub.category === cls?.level).map((sub) => {
+                  {subjects.map((sub) => {
                     const s = scores.find(score => score.subject_id === sub.id);
                     const total = (s?.first_ca || 0) + (s?.second_ca || 0) + (s?.exam || 0);
                     return (

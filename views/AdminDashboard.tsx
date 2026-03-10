@@ -727,7 +727,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ activeTab, onTabChange 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-black">
-                  {subjects.filter(sub => sub.category === cls?.level).map((sub) => {
+                  {subjects.filter(sub => 
+                    teacherSubjects.some(ts => ts.class_id === cls?.id && ts.subject_id === sub.id)
+                  ).map((sub) => {
                     const s = allScores.find(score => score.student_id === student.id && score.subject_id === sub.id && score.term === adminSelectedTerm && score.session === settingsData.current_session);
                     const total = (s?.first_ca || 0) + (s?.second_ca || 0) + (s?.exam || 0);
                     return (

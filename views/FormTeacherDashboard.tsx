@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { db, calculatePositions } from '../db';
 import { useAuth } from '../App';
-import { Student, Score, Subject, SchoolClass, FormTeacherRemark, SchoolSettings } from '../types';
+import { Student, Score, Subject, SchoolClass, FormTeacherRemark, SchoolSettings, TeacherSubject } from '../types';
 import { getGrade, getRemark, getAutoRemark, getOrdinal, getGradeRemark } from '../constants';
 import { Printer, CheckCircle, Search, FileText, ChevronRight, LayoutGrid, List, Award, TrendingUp, Calendar, Hash, X, FileSpreadsheet, ShieldCheck, ShieldAlert, Clock } from 'lucide-react';
 
@@ -13,6 +13,7 @@ const FormTeacherDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allScores, setAllScores] = useState<Score[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [teacherSubjects, setTeacherSubjects] = useState<TeacherSubject[]>([]);
   const [remarks, setRemarks] = useState<Record<string, FormTeacherRemark>>({});
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isPrintingSummary, setIsPrintingSummary] = useState(false);
@@ -35,11 +36,12 @@ const FormTeacherDashboard: React.FC = () => {
       const cls = allClasses.find(c => c.form_teacher_id === user.id);
       if (cls) {
         setMyClass(cls);
-        const [allStudents, allScoresRaw, allSubjectsRaw, allRemarksRaw] = await Promise.all([
+        const [allStudents, allScoresRaw, allSubjectsRaw, allRemarksRaw, tsRaw] = await Promise.all([
           db.students.getAll(),
           db.scores.getAll(),
           db.subjects.getAll(),
-          db.remarks.getAll()
+          db.remarks.getAll(),
+          db.teacherSubjects.getAll()
         ]);
 
         const classStudents = allStudents.filter(stu => stu.class_id === cls.id);
@@ -48,7 +50,11 @@ const FormTeacherDashboard: React.FC = () => {
         const scores = allScoresRaw.filter(sc => sc.class_id === cls.id && sc.term === term && sc.session === s.current_session);
         setAllScores(scores);
         
-        setSubjects(allSubjectsRaw.filter(sub => sub.category === cls.level));
+        const classTeacherSubjects = tsRaw.filter(ts => ts.class_id === cls.id);
+        setTeacherSubjects(classTeacherSubjects);
+        setSubjects(allSubjectsRaw.filter(sub => 
+          classTeacherSubjects.some(ts => ts.subject_id === sub.id)
+        ));
         
         const existingRemarks = allRemarksRaw.filter(r => r.class_id === cls.id && r.term === term && r.session === s.current_session);
         const remarkMap: Record<string, FormTeacherRemark> = {};

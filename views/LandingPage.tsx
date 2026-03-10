@@ -114,9 +114,9 @@ const LandingPage: React.FC = () => {
                 Online & Physical Learning
               </div>
               <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter uppercase">
-                SCHOOL FOR <br />
-                <span className="text-school-gold">LEADERS</span> <br />
-                <span className="text-3xl md:text-5xl opacity-90">OF TOMORROW</span>
+                PRINCE AND <br />
+                <span className="text-school-accent">PRINCESS</span> <br />
+                <span className="text-3xl md:text-5xl opacity-90">INTERNATIONAL SCHOOL</span>
               </h2>
               <div className="flex flex-col md:flex-row gap-8 pt-4">
                 <div className="flex items-start gap-3">
@@ -143,8 +143,8 @@ const LandingPage: React.FC = () => {
           <div className="relative hidden lg:block animate-in fade-in slide-in-from-right-12 duration-1000">
             <div className="relative z-10 rounded-[4rem] overflow-hidden border-[12px] border-white/10 shadow-2xl">
               <img 
-                src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" 
-                alt="Happy Student" 
+                src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1000" 
+                alt="Student at School" 
                 className="w-full h-[600px] object-cover"
               />
               <div className="absolute top-10 right-10 bg-white p-6 rounded-3xl shadow-2xl animate-bounce duration-[3000ms]">
@@ -188,10 +188,10 @@ const LandingPage: React.FC = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { id: 1, title: "Academic Excellence", desc: "We provide a rigorous curriculum that prepares students for global challenges.", icon: BookOpen, color: "bg-blue-50 text-blue-600" },
-              { id: 2, title: "Moral Integrity", desc: "Instilling strong values and character in every student through guidance.", icon: ShieldCheck, color: "bg-purple-50 text-purple-600" },
-              { id: 3, title: "Skill Acquisition", desc: "Practical skills in technology, arts, and crafts to prepare for the future.", icon: Lightbulb, color: "bg-emerald-50 text-emerald-600" },
-              { id: 4, title: "Career Guidance", desc: "Helping students discover their passions and path to professional success.", icon: Briefcase, color: "bg-amber-50 text-amber-600" }
+              { id: 1, title: "Academic Excellence", desc: "We provide a rigorous curriculum that prepares students for global challenges.", icon: BookOpen, color: "bg-red-50 text-school-primary" },
+              { id: 2, title: "Moral Integrity", desc: "Instilling strong values and character in every student through guidance.", icon: ShieldCheck, color: "bg-green-50 text-school-secondary" },
+              { id: 3, title: "Skill Acquisition", desc: "Practical skills in technology, arts, and crafts to prepare for the future.", icon: Lightbulb, color: "bg-yellow-50 text-school-accent" },
+              { id: 4, title: "Career Guidance", desc: "Helping students discover their passions and path to professional success.", icon: Briefcase, color: "bg-slate-50 text-slate-600" }
             ].map((feature) => (
               <div key={feature.id} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-2xl hover:scale-[1.02] transition-all duration-500 group">
                 <div className="flex items-center justify-between mb-6">
@@ -228,10 +228,10 @@ const LandingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { label: "Success Rate", value: "100%", icon: Award, color: "text-blue-600" },
-              { label: "Qualified Teachers", value: "50+", icon: Users, color: "text-orange-500" },
-              { label: "Active Students", value: "1000+", icon: GraduationCap, color: "text-emerald-600" },
-              { label: "Years Experience", value: "15+", icon: Clock, color: "text-purple-600" }
+              { label: "Success Rate", value: "100%", icon: Award, color: "text-school-primary" },
+              { label: "Qualified Teachers", value: "50+", icon: Users, color: "text-school-secondary" },
+              { label: "Active Students", value: "1000+", icon: GraduationCap, color: "text-school-accent" },
+              { label: "Years Experience", value: "15+", icon: Clock, color: "text-slate-600" }
             ].map((stat, i) => (
               <div key={i} className="text-center space-y-2 group">
                 <div className={`w-12 h-12 mx-auto rounded-2xl bg-white shadow-sm flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform`}>
@@ -326,10 +326,10 @@ const LandingPage: React.FC = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { title: "JUNIOR MIDDLE", age: "10-12 YEARS", duration: "3 YEARS", color: "bg-blue-600", desc: "Foundation years focusing on core subjects and character building.", price: "JSS 1-3" },
-              { title: "SENIOR HIGH", age: "13-15 YEARS", duration: "3 YEARS", color: "bg-orange-500", desc: "Specialized streams in Sciences, Arts, and Commercial subjects.", price: "SSS 1-3" },
-              { title: "TECH SUPER", age: "10-15 YEARS", duration: "CONTINUOUS", color: "bg-emerald-600", desc: "Advanced computer studies, coding, and digital literacy programs.", price: "EXTRAS" },
-              { title: "LEAD EXPERT", age: "12-15 YEARS", duration: "ANNUAL", color: "bg-purple-600", desc: "Leadership training, public speaking, and community service projects.", price: "LEADERS" }
+              { title: "JUNIOR MIDDLE", age: "10-12 YEARS", duration: "3 YEARS", color: "bg-school-primary", desc: "Foundation years focusing on core subjects and character building.", price: "JSS 1-3" },
+              { title: "SENIOR HIGH", age: "13-15 YEARS", duration: "3 YEARS", color: "bg-school-secondary", desc: "Specialized streams in Sciences, Arts, and Commercial subjects.", price: "SSS 1-3" },
+              { title: "TECH SUPER", age: "10-15 YEARS", duration: "CONTINUOUS", color: "bg-school-accent", desc: "Advanced computer studies, coding, and digital literacy programs.", price: "EXTRAS" },
+              { title: "LEAD EXPERT", age: "12-15 YEARS", duration: "ANNUAL", color: "bg-school-dark", desc: "Leadership training, public speaking, and community service projects.", price: "LEADERS" }
             ].map((program, i) => (
               <div key={i} className={`${program.color} p-8 rounded-[3rem] text-white space-y-6 shadow-xl hover:scale-[1.05] transition-all duration-500 flex flex-col`}>
                 <div className="flex gap-2">
@@ -369,11 +369,11 @@ const LandingPage: React.FC = () => {
 
               <div className="space-y-6">
                 {[
-                  { title: "Excellent Academic Performance", icon: Award, color: 'text-school-gold' },
-                  { title: "Strong Moral & Character Training", icon: ShieldCheck, color: 'text-emerald-500' },
-                  { title: "Qualified & Caring Teachers", icon: Users, color: 'text-blue-500' },
-                  { title: "Safe & Disciplined School Environment", icon: Clock, color: 'text-purple-500' },
-                  { title: "Focus on Academics & Personal Growth", icon: Lightbulb, color: 'text-amber-500' }
+                  { title: "Excellent Academic Performance", icon: Award, color: 'text-school-accent' },
+                  { title: "Strong Moral & Character Training", icon: ShieldCheck, color: 'text-school-secondary' },
+                  { title: "Qualified & Caring Teachers", icon: Users, color: 'text-school-primary' },
+                  { title: "Safe & Disciplined School Environment", icon: Clock, color: 'text-slate-600' },
+                  { title: "Focus on Academics & Personal Growth", icon: Lightbulb, color: 'text-school-accent' }
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100 transition-all hover:bg-white hover:shadow-2xl hover:scale-[1.02] group">
                     <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm shrink-0 group-hover:bg-school-royal group-hover:text-white transition-all">
@@ -452,17 +452,17 @@ const LandingPage: React.FC = () => {
                 Leave a request for a free consultation. We will help you understand our programs and enrollment process.
               </p>
               <div className="flex items-center gap-4 text-white/50 text-xs font-black uppercase tracking-widest">
-                <Clock size={16} className="text-school-gold" />
+                <Clock size={16} className="text-school-accent" />
                 <span>Response time: 15 minutes</span>
               </div>
               
               <div className="pt-8 border-t border-white/10 flex gap-6">
                 <div className="space-y-1">
-                  <p className="text-school-gold text-[9px] font-black uppercase tracking-widest">Email Us</p>
+                  <p className="text-school-accent text-[9px] font-black uppercase tracking-widest">Email Us</p>
                   <p className="text-white font-bold text-sm">info@ppisms.edu.ng</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-school-gold text-[9px] font-black uppercase tracking-widest">Visit Us</p>
+                  <p className="text-school-accent text-[9px] font-black uppercase tracking-widest">Visit Us</p>
                   <p className="text-white font-bold text-sm">Wukari, Taraba State</p>
                 </div>
               </div>
@@ -470,10 +470,10 @@ const LandingPage: React.FC = () => {
 
             <div className="bg-white/5 backdrop-blur-xl p-10 rounded-[4rem] border border-white/10 shadow-2xl space-y-6">
               <div className="space-y-4">
-                <input type="text" placeholder="Your Name" className="w-full p-5 bg-white rounded-2xl text-slate-900 font-bold outline-none focus:ring-4 focus:ring-school-gold/30 transition-all" />
-                <input type="tel" placeholder="Phone Number" className="w-full p-5 bg-white rounded-2xl text-slate-900 font-bold outline-none focus:ring-4 focus:ring-school-gold/30 transition-all" />
+                <input type="text" placeholder="Your Name" className="w-full p-5 bg-white rounded-2xl text-slate-900 font-bold outline-none focus:ring-4 focus:ring-school-accent/30 transition-all" />
+                <input type="tel" placeholder="Phone Number" className="w-full p-5 bg-white rounded-2xl text-slate-900 font-bold outline-none focus:ring-4 focus:ring-school-accent/30 transition-all" />
               </div>
-              <button className="w-full py-5 bg-school-gold text-school-royal rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-xl">
+              <button className="w-full py-5 bg-school-accent text-school-primary rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-xl">
                 SUBMIT REQUEST
               </button>
               <p className="text-[9px] text-white/40 text-center uppercase tracking-widest font-bold">
@@ -484,10 +484,10 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      <footer className="bg-school-royal py-12 border-t border-white/10">
+      <footer className="bg-school-primary py-12 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white text-school-royal rounded-xl flex items-center justify-center font-black text-2xl shadow-xl">P</div>
+            <div className="w-12 h-12 bg-white text-school-primary rounded-xl flex items-center justify-center font-black text-2xl shadow-xl">P</div>
             <div>
               <h3 className="text-lg font-black uppercase tracking-tighter text-white leading-none">Prince & Princess</h3>
               <p className="text-[8px] font-black uppercase tracking-[0.4em] text-white/40">International School</p>
@@ -498,7 +498,7 @@ const LandingPage: React.FC = () => {
           </p>
           <div className="flex gap-6">
             {navLinks.slice(0, 3).map(l => (
-              <a key={l.name} href={l.href} onClick={(e) => handleNavClick(e, l.href)} className="text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-school-gold transition-colors">{l.name}</a>
+              <a key={l.name} href={l.href} onClick={(e) => handleNavClick(e, l.href)} className="text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-school-accent transition-colors">{l.name}</a>
             ))}
           </div>
         </div>
